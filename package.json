@@ -1,0 +1,15 @@
+{
+  "name": "ticket_system",
+  "version": "1.0.0",
+  "description": "manage tickets with AI",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test",
+	"start": "node index.js"
+  },
+  "author": "GMG",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
