@@ -5,7 +5,6 @@ const cors = require('cors')
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors())
 
 const restClient = axios.create({
   baseURL: 'https://api.wit.ai',
