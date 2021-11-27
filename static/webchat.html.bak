@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta charset="utf-8">
+		<script
+		  src="https://code.jquery.com/jquery-3.3.1.js"
+		  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+		  crossorigin="anonymous">
+		</script>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		
+		<style>
+			*{
+				-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+				-moz-box-sizing: border-box; /* Firefox, other Gecko */
+				box-sizing: border-box; /* Opera/IE 8+ */
+			}
+			.mine{
+				text-align:right;
+			}
+			.bot{
+				text-align:left;
+			}
+			.mine .text{
+				border-bottom-left-radius: 1em;
+				border-bottom-right-radius: 1.0em;
+				border-top-right-radius: 4px;
+				border-top-left-radius: 1.0em;
+				background-color: #3498db;
+				color: #fff;
+				display:inline-block;
+			}
+			.mine .text span{
+				padding:10px 10px 10px 10px;
+				color: #fff;
+			}
+			.bot .text{
+				background-color: #c3c3c3;
+				border-bottom-left-radius: 1.0em;
+				border-top-left-radius: 4px;
+				border-bottom-right-radius: 1.0em;
+				border-top-right-radius: 1.0em;
+				display:inline-block;
+			}
+			.bot .text span{
+				padding:10px 10px 10px 10px;
+				overflow-wrap: break-word;
+			}
+			.input span{
+				width:9%;
+			}
+			.input input{
+				height:40px;
+				width:80%;
+			}
+			.input .image{
+				display:inline-block;
+				height:16px;
+				width:16px;
+				background-image:url("chat_images.png");
+				background-size: auto;
+				background-position: -34px -89px;
+			}
+			.custom-drop-down{
+				position: absolute;
+				bottom : 50px;
+				left: 0;
+				z-index: 1000;
+				display: none;
+				float: left;
+				min-width: 300px;
+				padding: 5px 0;
+				margin: 2px 0 0;
+				font-size: 14px;
+				text-align: left;
+				list-style: none;
+				background-color: #fff;
+				-webkit-background-clip: padding-box;
+				background-clip: padding-box;
+				border: 1px solid #ccc;
+				border: 1px solid rgba(0,0,0,.15);
+				border-radius: 4px;
+				-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+				box-shadow: 0 6px 12px rgba(0,0,0,.175);
+			}
+			.custom-drop-down .divider{
+				height: 1px;
+				margin: 9px 0;
+				overflow: hidden;
+				background-color: #e5e5e5;
+			}
+			.custom-drop-down > li > a{
+				display: block;
+				padding: 3px 20px;
+				clear: both;
+				font-weight: 400;
+				line-height: 1.42857143;
+				color: #333;
+				white-space: nowrap;
+			}
+			.generic_button ul{
+				list-style : none;
+				padding-left:0px;
+				margin-left:0px;
+				margin-top:15px;
+			}
+			.generic_button ul li{
+				line-height: 2em;
+			}
+			.generic_button ul li .text-title-subtitle div{
+				margin-bottom:10px;
+			}
+			.generic_button ul li .text-title-subtitle span{
+				padding:10px 10px 10px 10px;
+			}
+			.slider {
+			  position: relative;
+			  overflow: hidden;
+			  margin: 20px auto 0 auto;
+			  border-radius: 4px;
+			}
+			.slider ul {
+			  position: relative;
+			  margin: 0;
+			  padding: 0;
+			  height: 200px;
+			  list-style: none;
+			}
+			.slider ul li {
+			  position: relative;
+			  display: block;
+			  float: left;
+			  margin: 0;
+			  padding: 0;
+			  width: 250px;
+			  height: auto;
+			  text-align: center;
+			  line-height: 150px;
+			}
+			.slider ul li .text-title-subtitle{
+				line-height:20px;
+				width : 250px !important;
+				height: auto;
+				text-align:left;
+				border-bottom : 1px solid #c3c3c3;
+			}
+			a.control_prev, a.control_next {
+			  position: absolute;
+			  top:20%;
+			  z-index: 999;
+			  display: block;
+			  padding: 4% 3%;
+			  width: auto;
+			  height: auto;
+			  background: #2a2a2a;
+			  color: #fff;
+			  text-decoration: none;
+			  font-weight: 600;
+			  font-size: 18px;
+			  opacity: 0.8;
+			  cursor: pointer;
+			}
+			a.control_prev:hover, a.control_next:hover {
+			  opacity: 1;
+			  -webkit-transition: all 0.2s ease;
+			}
+			a.control_prev {
+			  border-radius: 0 2px 2px 0;
+			}
+			a.control_next {
+			  right: 0;
+			  border-radius: 2px 0 0 2px;
+			}
+			.main-ul{
+				list-style:none;
+				line-height: 2.8em;
+				padding-left:10px;
+				padding-right:10px;
+			}
+			#container{
+				width:100%;
+				border:1px solid #c3c3c3;
+				overflow-y:scroll;
+			}
+			.list-view{
+				border : 1px solid #c3c3c3;
+			}
+			.list-view .list-item{
+				border-bottom : 1px solid #c3c3c3;
+				margin : 5px 5px 5px 5px;
+			}
+			.list-view .list-item-last{
+				border-bottom : none !important;
+				margin : 5px 5px 5px 5px;
+			}
+			.list-view .list-item .btn-info{
+				margin-bottom:5px;
+			}
+			.list-view .list-item .title{
+				width:80%;
+				float:left;
+			}
+			.list-view .list-item img{
+				width:20%;
+				float:left;
+			}
+			.quickReply .quickContent{
+				background-color: #c3c3c3;
+				border-bottom-left-radius: 1.0em;
+				border-top-left-radius: 4px;
+				border-bottom-right-radius: 1.0em;
+				border-top-right-radius: 1.0em;
+			}
+			.quickReply .quickContent span{
+				padding:10px 10px 10px 10px;
+				overflow-wrap: break-word;
+			}
+			.quickReply div button{
+				border-bottom-left-radius: 1.0em;
+				border-top-left-radius: 1.0em;
+				border-bottom-right-radius: 1.0em;
+				border-top-right-radius: 1.0em;
+			}
+		</style>
+		
+		<script type="text/javascript">
+			//Persistence Menu load at the begining
+			var persistenceMenu = {
+				toggle : function(el){
+					$(el).toggle();
+				},
+				bind : function(){
+					$(".persistenceMenu").on("click", function(event){
+						persistenceMenu.toggle($(".custom-drop-down"));
+					});
+				}
+			};
+			//carousel function for multi slider
+			var slider = {
+				createSlider : function(el){
+					var slideCount = $(el).find('ul li').length;
+					var slideWidth = $(el).find('ul li').width();
+					var max = -1;
+					for(var i = 0; i < $(el).find('ul li').length; i++){
+						if(max < $($(el).find("ul li")[i]).height()){
+							max = $($(el).find("ul li")[i]).height();
+						}
+					}
+					var slideHeight =max;
+					var sliderUlWidth = slideCount * slideWidth;
+					$(el).css({ width: slideWidth, height: 'auto'});
+					$(el).find('ul').css({ width: sliderUlWidth, marginLeft: "0px" });
+					$(el).find('ul li').last().prependTo($(el).find('ul'));
+					function moveLeft(el) {
+						$($(el).children()[2]).animate({
+							left: + slideWidth
+						}, 200, function () {
+							$($(el).children()[2]).children().last().prependTo(($(el).children()[2]));
+							$($(el).children()[2]).css('left', '');
+						});
+					};
+					function moveRight(el) {
+						$($(el).children()[2]).animate({
+							left: - slideWidth
+						}, 200, function () {
+							$($(el).children()[2]).children().first().appendTo(($(el).children()[2]));
+							$(($(el).children()[2])).css('left', '');
+						});
+					};
+					$(el).find('a.control_prev').click(function (event) {
+						moveLeft(event.target.parentNode);
+					});
+					$(el).find('a.control_next').click(function (event) {
+						moveRight(event.target.parentNode);
+					});
+				}
+			};
+			//created Views and templates
+			var views = {
+				carousel : function(obj){
+					var carousel = '<div class="slider_'+obj.intent+' slider">'
+						+'<a href="javascript:void(0)" class="control_next">></a>'
+						+'<a href="javascript:void(0)" class="control_prev"><</a>'
+						+'<ul>'
+							var li = "";
+						for(var i = 0; i < obj.text.length; i++){
+						 li +='<li>'
+								+'<img width="250px" height="150px" src="'+obj.text[i].imgUrl+'"/>'
+								+'<div class="text-title-subtitle">'
+									+'<div><b>'+obj.text[i].title+'</b></div>'
+								+'	<div>'+obj.text[i].subtitle+'</div>';
+								var buttons="";
+								for(var j = 0; j < obj.text[i].buttons.length; j++){
+										buttons +='	<a style="width:250px" href="'+obj.text[i].buttons[j].url+'" type="button" class="btn btn-info">'+obj.text[i].buttons[j].name+'</a>'
+								}
+								li += buttons;
+								li+='</div></li>';
+						}
+						carousel +=li+'</ul></div>'
+						return carousel;
+				},
+				quickReply : function(obj){
+					var qReply = '<div class="quickReply">'
+						+'<div class="quickContent">'
+							+	'<span>'+obj.text[0].text+'</span>'
+						+'</div>';
+						for(var j = 0; j < obj.text[0].buttons.length; j++){
+								if(j % 2 == 0){
+										qReply += '<div style="text-align:center">';
+								}
+								qReply +='<button style="width:40%" type="button" class="btn btn-info" onclick="quickReplyFunc(\''+obj.text[0].buttons[j].text+'\', event)">'+obj.text[0].buttons[j].name+'</button>';
+								if(j % 2 == 1){
+									qReply += '</div>'
+								}
+						}
+						qReply +='</div>';
+					return qReply;
+				},
+				listTemplate : function(obj){
+					var listTemplate = '<div class="list-view">'
+						console.log(obj);
+						for(var i = 0; i < obj.text.list.length; i++){
+								listTemplate += '<div class="list-item">'
+								+'<div><span class="title"><b>'+obj.text.list[i].title+'</b></span><img width="40px" height="40px" src="'+obj.text.list[i].imgUrl+'"/></div>'
+								+'<div><span>'+obj.text.list[i].subTitle+'</span></div>';
+								var buttons = "";
+								for(var j = 0; j < obj.text.list[i].buttons.length; j++){
+									if(obj.text.list[i].buttons[j].text){
+										buttons +='<div><a target="_blank" href="'+obj.text.list[i].buttons[j].url+'" onclick="buttonWrite(\''+obj.text.list[i].buttons[j].text+'\')" style="width:150px" type="button" class="btn btn-info">'+obj.text.list[i].buttons[j].name+'</a></div>'
+									}else{
+										buttons +='<div><a target="_blank" href="'+obj.text.list[i].buttons[j].url+'"  style="width:150px" type="button" class="btn btn-info">'+obj.text.list[i].buttons[j].name+'</a></div>'
+									}
+								}
+								listTemplate += buttons;
+								listTemplate +='</div>'
+						}
+						listTemplate +='<div class="list-item list-item-last">'
+							+'<div><a target="_blank" href="'+obj.text.viewMoreButtonUrl+'" style="width:250px" type="button" class="btn btn-info">'+obj.text.viewMoreButtonName+'</a></div>'
+						+'</div>'
+					+'</div>';
+					return listTemplate;
+				},
+				genericButtons : function(obj){
+					var genericButtons = '<div class="generic_button">'
+						  +'<ul >'
+							+	'<li>'
+									+'<div class="text-title-subtitle">'
+										+'<div class="text"><span>'+obj.text[0].text+'</span></div>';
+										var buttons = "";
+										for(var i = 0; i < obj.text[0].buttons.length; i++){
+											if(obj.text[0].buttons[i].text && obj.text[0].buttons[i].url){
+												buttons += '<a target="_blank" href="'+obj.text[0].buttons[i].url+'" onclick="buttonWrite(\''+obj.text[0].buttons[i].text+'\')" style="width:200px" type="button" class="btn btn-info">'+obj.text[0].buttons[i].name+'</a>';
+											}else if(!obj.text[0].buttons[i].text && obj.text[0].buttons[i].url){
+												buttons += '<a target="_blank" href="'+obj.text[0].buttons[i].url+'" style="width:200px" type="button" class="btn btn-info">'+obj.text[0].buttons[i].name+'</a>';
+											}else if(obj.text[0].buttons[i].text && !obj.text[0].buttons[i].url){
+												buttons += '<a onclick="buttonWrite(\''+obj.text[0].buttons[i].text+'\')" style="width:200px" type="button" class="btn btn-info">'+obj.text[0].buttons[i].name+'</a>';
+											}
+										}
+							genericButtons += buttons;
+							genericButtons += '</div>'
+								+'</li>'
+						 +' </ul>'
+						+'</div>'
+					return genericButtons;
+				}
+			};
+			//load function for messages from Mongo db
+			var load = {
+				load : function(){
+					var request = $.ajax({
+						url: "/mongo/findByQuery/messages",
+						method: "POST",
+						data: {
+							query : {}
+						},
+						dataType: "json"
+					});
+					request.done(function( msg ) {
+						for(var i=0; i < msg.length; i++){
+							if(msg[i].user_id == "BOT"){
+								if(msg[i].message.type && msg[i].message.type=='carousel'){
+									$('#container .main-ul').append('<li class="bot">'+views.carousel(msg[i].message)+'</li>');
+									slider.createSlider($(".slider_"+msg[i].message.intent));
+								}
+								else if (msg[i].message.type && msg[i].message.type=='quickReply'){
+									$('#container .main-ul').append('<li class="bot">'+views.quickReply(msg[i].message)+'</li>');
+								}
+								else if(msg[i].message.type && msg[i].message.type=="listTemplate"){
+									$('#container .main-ul').append('<li class="bot">'+views.listTemplate(msg[i].message)+'</li>');
+								}
+								else if(msg[i].message.type && (msg[i].message.type=="genericButtons" || msg[i].message.type=="attachment")){
+									$('#container .main-ul').append('<li class="bot">'+views.genericButtons(msg[i].message)+'</li>');
+								}
+								else{
+									$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg[i].message.text+'</span></div><br/></li>');
+								}
+							}else{
+								$('#container .main-ul').append('<li class="mine"><div class="text"><span>'+msg[i].message.text+'</span></div><br/></li>');
+							}
+						}
+					});
+					request.fail(function( jqXHR, textStatus ) {
+						alert( "Request failed: " + textStatus );
+					});
+				}
+			};
+			// quickReply show hide and sen message
+			var quickReplyFunc = function(text, event){
+				$(".input input").val(text);
+				$(".input input").trigger("keypress", [ "Automatically"]);
+				var el = event.target ||event.srcElement;
+				$(el).parent().hide();
+			};
+			var buttonWrite = function(text){
+				$(".input input").val(text);
+				$(".input input").trigger("keypress", [ "Automatically"]);
+			};
+			$(document).ready(function(){
+				persistenceMenu.bind();
+				//load all messages at mongodb
+				load.load();
+				//Key press enter after writing message triggers this function
+				$(".input input").on('keypress',function(event, parameter){
+						if(event.which == 13 || parameter){
+								//user write
+								$('#container .main-ul').append('<li class="mine"><div class="text"><span>'+event.target.value+'</span></div><br/></li>');
+								$("#container").animate({ scrollTop: $('#container ul').height()});
+								var request = $.ajax({
+								  url: "/message?message=" + encodeURIComponent(event.target.value),
+								  method: "GET",
+								  data: {
+										},
+								  dataType: "json"
+								});
+								request.done(function( msg ) {
+											event.target.value = "";
+											if(msg.type && msg.type=="carousel"){
+												$('#container .main-ul').append('<li class="bot">'+views.carousel(msg)+'</li>');
+												slider.createSlider($(".slider_"+msg.intent));
+											}else if(msg.type && msg.type=="quickReply"){
+												$('#container .main-ul').append('<li class="bot">'+views.quickReply(msg)+'</li>');
+											}
+											else if(msg.type && msg.type=="listTemplate"){
+												$('#container .main-ul').append('<li class="bot">'+views.listTemplate(msg)+'</li>');
+											}
+											else if(msg.type && (msg.type=="genericButtons" || msg.type == "attachment")){
+												$('#container .main-ul').append('<li class="bot">'+views.genericButtons(msg)+'</li>');
+											}
+											else{
+													$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg.text+'</span></div><br/></li>');
+											}
+											$("#container").animate({ scrollTop: $('#container ul').height()});
+								});
+								request.fail(function( jqXHR, textStatus ) {
+								  alert( "Request failed: " + textStatus );
+								});
+						}
+				});
+				$("#container").on("shown.bs.collapse", function(){
+			  	$("#container").animate({ scrollTop: $('#container ul').height()}, 1000);
+			  });
+			});
+		</script>
+
+	</head>
+	<body style="width:100%;height:100%">
+	
+	
+	<div style="width:100%">
+			<!--<button style="width:300px" type="button" class="btn btn-info" data-toggle="collapse" data-target="#container">Simple collapsible</button>-->
+			<div id="container" >
+				<ul class="main-ul">
+					<li class="bot"><div class="text"><span>AAAAAA aaaaa aaaaaaaaaaa aaaa aaaaaaa</span></div><br/></li>
+					<li class="mine"><div class="text"><span>BBBBB</span></div><br/></li>
+					<li class="mine"><div class="text"><span>CCCCCC</span></div><br/></li>
+					<li class="bot"><div class="text"><span>DDDDDD</span></div><br/></li>
+					<li class="bot"><div class="text"><span>DDDDDD</span></div><br/></li>
+					<li class="bot"><div class="text"><span>DDDDDD</span></div><br/></li>
+					<li class="bot">
+						<div class="generic_button">
+						  <ul >
+								<li>
+									<div class="text-title-subtitle">
+										<div class="text"><span>Please select between below options AAAAAA AAAAAAAAA AAAAAAAAAAAA AAAAAAAAA</span></div>
+										<button style="width:200px" type="button" class="btn btn-info">Button</button>
+										<button style="width:200px" type="button" class="btn btn-info">Button</button>
+										<button style="width:200px" type="button" class="btn btn-info">Button</button>
+									</div>
+								</li>
+						  </ul>
+						</div>
+					</li>
+					<li class="bot">
+						<div class="slider_1 slider">
+						  <a href="javascript:void(0)" class="control_next">></a>
+						  <a href="javascript:void(0)" class="control_prev"><</a>
+							<ul>
+								<li>
+									<img width="250px" height="150px" src="https://i0.wp.com/lovecuteanimals.objects.cdn.dream.io/wp-content/uploads/2016/01/Cute-Netherland-Dwarf-Rabbit.jpg?w=1160"/>
+									<div class="text-title-subtitle">
+										<div><b>Title</b></div>
+										<div>Subtitle</div>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+									</div>
+								</li>
+								<li>
+									<img width="250px" height="150px" src="https://i0.wp.com/lovecuteanimals.objects.cdn.dream.io/wp-content/uploads/2016/01/Cute-Netherland-Dwarf-Rabbit.jpg?w=1160"/>
+									<div class="text-title-subtitle">
+										<div><b>Title</b></div>
+										<div>Subtitle</div>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+									</div>
+								</li>
+								<li>
+									<img width="250px" height="150px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/>
+									<div class="text-title-subtitle">
+										<div><b>Title</b></div>
+										<div>Subtitle</div>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+									</div>
+								</li>
+						  </ul>
+						</div>
+						<script>
+							$(document).ready(function(){
+								slider.createSlider($('.slider_1'));
+							});
+						</script>
+					</li>
+					<li class="bot">
+						<div class="slider_2 slider">
+						  <a href="javascript:void(0)" class="control_next">></a>
+						  <a href="javascript:void(0)" class="control_prev"><</a>
+							<ul>
+								<li>
+									<img width="250px" height="150px" src="https://i0.wp.com/lovecuteanimals.objects.cdn.dream.io/wp-content/uploads/2016/01/Cute-Netherland-Dwarf-Rabbit.jpg?w=1160"/>
+									<div class="text-title-subtitle">
+										<div><b>Title</b></div>
+										<div>Subtitle</div>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+									</div>
+								</li>
+								<li>
+									<img width="250px" height="150px" src="https://i0.wp.com/lovecuteanimals.objects.cdn.dream.io/wp-content/uploads/2016/01/Cute-Netherland-Dwarf-Rabbit.jpg?w=1160"/>
+									<div class="text-title-subtitle">
+										<div><b>Title</b></div>
+										<div>Subtitle</div>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+									</div>
+								</li>
+								<li>
+									<img width="250px" height="150px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/>
+									<div class="text-title-subtitle">
+										<div><b>Title</b></div>
+										<div>Subtitle</div>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+										<button style="width:250px" type="button" class="btn btn-info">Button</button>
+									</div>
+								</li>
+						  </ul>
+						</div>
+						<script>
+							$(document).ready(function(){
+								slider.createSlider($('.slider_2'));
+							});
+						</script>
+					</li>
+					<li class="bot">
+						<div class="list-view">
+							<div class="list-item">
+								<div><span class="title"><b>Title Title TitleTitleTitle Title TitleTitle TitleTitleTitle</b></span><img width="40px" height="40px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/></div>
+								<div><span>SubTitle SubTitle SubTitleSubTitleSubTitleSubTitle SubTitle</span></div>
+								<div><button style="width:150px" type="button" class="btn btn-info">Button</button></div>
+							</div>
+							<div class="list-item">
+								<div><span class="title"><b>Title</b></span><img  width="40px" height="40px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/></div>
+								<div><span>SubTitle</span></div>
+								<div><button style="width:150px" type="button" class="btn btn-info">Button</button></div>
+							</div>
+							<div class="list-item">
+								<div><span class="title"><b>Title</b></span><img  width="40px" height="40px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/></div>
+								<div><span>SubTitle</span></div>
+								<div><button style="width:150px" type="button" class="btn btn-info">Button</button></div>
+							</div >
+							<div class="list-item">
+								<div><span class="title"><b>Title</b></span><img  width="40px" height="40px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/></div>
+								<div><span>SubTitle</span></div>
+								<div><button style="width:150px" type="button" class="btn btn-info">Button</button></div>
+							</div>
+							<div class="list-item">
+								<div><button style="width:250px" type="button" class="btn btn-info">View More</button></div>
+							</div>
+						</div>
+					</li>
+					<li class="bot">
+						<div class="quickReply">
+							<div class="quickContent">
+									<span>Hello, did you like my intent, please answer....</span>
+							</div>
+							<div style="text-align:center">
+								<button style="width:40%" type="button" class="btn btn-info">Button</button>
+								<button style="width:40%" type="button" class="btn btn-info">Button</button>
+							</div>
+							<div style="text-align:center">
+								<button style="width:40%" type="button" class="btn btn-info">Button</button>
+							</div>
+						</div>
+					</li>
+				</ul>
+				<div class="input" style="width:100%;border:1px solid #c3c3c3;height:50px;">
+					<span class="persistenceMenu glyphicon glyphicon-menu-hamburger" >
+						<ul class="custom-drop-down ">
+							<li><a href="#">Action</a></li>
+						 	<li role="separator" class="divider"></li>
+						 	<li><a href="#">Another action</a></li>
+						 	<li role="separator" class="divider"></li>
+							<li><a href="#">Something else here</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Separated link</a></li>
+							<li role="separator" class="divider"></li>
+					 	</ul>
+					</span><input type="text" name="input" placeholder="Please write a message" style="border:none"/>
+				 <a class="image" href="#"></a>
+			 </div>
+		  </div>
+		</div>
+	</body>	
+</html>

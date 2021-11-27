@@ -32,8 +32,8 @@ connectMongoDb()
   .catch(console.error);
 
 
-app.get('/', function (req, res) {
-   res.send('Hello World');
+app.get('/webchat', function(req, res){
+  res.sendFile(__dirname + "/static/webchat.html");
 })
 
 app.post('/intent', function(req,res) {
@@ -107,6 +107,9 @@ app.get('/message', function(req,res) {
 	restClient.get('/message?q=' + message)
 	.then(function(response) {
 	    const intents = response.data.intents;
+		console.log("Message Intent Array Found: ");
+		console.log(intents);
+		// threshold value : 0.7
 		const arr = findByThreshold(intents, 0.7);
 		if(intents.length === 0 || arr.length === 0) {
 		   res.send({
@@ -117,10 +120,24 @@ app.get('/message', function(req,res) {
 		   });
 		} else {
 			let intent = findMostConfidentValue(arr);
-			mongoDb.findByQuery('answers', { 'intent_id' : Number(intent.id)}, function(data) {
-				const length = data.length;
-				const answerIndex = randomIntFromInterval(0, length - 1)
-				res.send({'message' : { text : data[answerIndex].text}});
+			console.log("Message Intent Found: " + intent.name + " " + intent.id);
+			mongoDb.findByQuery('answers', {intent_id : Number(intent.id)}, function(data) {
+				console.log(data);
+				if(data.length > 0) {
+					const length = data.length;
+					const answerIndex = randomIntFromInterval(0, length - 1)
+					const responseMessage = {'message' : { text : data[answerIndex].text}};
+					mongoDb.insertOne('messages', { created :new Date().getTime(), message: { text: message, confidence: 1.0}, owner: 'user'}, function(data) {});
+					mongoDb.insertOne('messages', { created :new Date().getTime(), message :{ text : data[answerIndex].text, confidence: intent.confidence} , owner: 'bot'}, function(data) {});
+					res.send(responseMessage);
+				} else {
+					res.send({
+						'message':{
+							//fallback message
+							'text' : 'Ooops I can not find anything!'
+						}
+				    });
+				}
 			});
 		}
   	    
