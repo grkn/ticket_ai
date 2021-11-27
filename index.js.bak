@@ -91,6 +91,12 @@ app.get('/utterances', function(req,res) {
 	.catch(function(error) {res.send("Text can not be received. " + error.data);})
 });
 
+app.get('/allUtterances', function(req,res) {
+	restClient.get('/utterances?limit=1000')
+	.then(function(response) {res.send(response.data);})
+	.catch(function(error) {res.send("Text can not be received. " + error.data);})
+});
+
 app.delete('/utterances', function(req,res) {
 	const text = req.query.text;
 	restClient.delete('/utterances', { data : [{ 'text': text}]})

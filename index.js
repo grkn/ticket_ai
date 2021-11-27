@@ -63,9 +63,7 @@ app.delete('/intent', function(req,res) {
 
 app.get('/answers', function(req,res) {
 	const intentId = req.query.intentId;
-	console.log(intentId);
 	mongoDb.findByQuery('answers', { intent_id: intentId }, function(data) {
-		console.log(data);
 		res.send(data);
 	});
 });
