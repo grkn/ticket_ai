@@ -102,6 +102,46 @@ app.delete('/utterances', function(req,res) {
 	.catch(function(error) {res.send("Text can not be deleted. " + error.data);})
 });
 
+app.get('/message', function(req,res) {
+	const message = req.query.message;
+	restClient.get('/message?q=' + message)
+	.then(function(response) {
+	    const intents = response.data.intents;
+		const arr = findByThreshold(intents, 0.7);
+		if(intents.length === 0 || arr.length === 0) {
+		   res.send({
+				'message':{
+					//fallback message
+					'text' : 'Ooops I can not find anything!'
+				}
+		   });
+		} else {
+			let intent = findMostConfidentValue(arr);
+			mongoDb.findByQuery('answers', { 'intent_id' : intent.id}, function(data) {
+				const length = data.length;
+				const answerIndex = randomIntFromInterval(0, length - 1)
+				res.send({'message' : { text : data[answerIndex].text}});
+			});
+		}
+  	    
+	 })
+	.catch(function(error) {res.send("Message response can not be received. " + error.data);})
+})
+
+function findByThreshold(arr, thresholdValue) {
+	arr = arr.filter(item => item.confidence >= thresholdValue);
+	return arr;
+}
+
+function findMostConfidentValue(arr) {
+	arr = arr.sort((a,b) => a.confidence > b.confidence ? 1 : -1);
+	return arr[0];
+}
+
+function randomIntFromInterval(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 const server = app.listen(8081, function () {
    let host = server.address().address
    let port = server.address().port
