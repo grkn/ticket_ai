@@ -145,6 +145,12 @@ app.get('/message', function(req,res) {
 	.catch(function(error) {res.send("Message response can not be received. " + error.data);})
 })
 
+app.get('/messages', function(req,res) {
+	mongoDb.findByQuery('messages',  {}, function(data) {
+		res.send(data);
+	});
+})
+
 function findByThreshold(arr, thresholdValue) {
 	arr = arr.filter(item => item.confidence >= thresholdValue);
 	return arr;

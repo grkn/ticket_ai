@@ -121,7 +121,7 @@ app.get('/message', function(req,res) {
 		} else {
 			let intent = findMostConfidentValue(arr);
 			console.log("Message Intent Found: " + intent.name + " " + intent.id);
-			mongoDb.findByQuery('answers', {intent_id : Number(intent.id)}, function(data) {
+			mongoDb.findByQuery('answers', { intent_id : Number(intent.id) }, function(data) {
 				console.log(data);
 				if(data.length > 0) {
 					const length = data.length;
@@ -143,6 +143,12 @@ app.get('/message', function(req,res) {
   	    
 	 })
 	.catch(function(error) {res.send("Message response can not be received. " + error.data);})
+})
+
+app.get('/messages', function(req,res) {
+	mongoDb.findByQuery('messages',  {"sort" : ['created', 'asc']}, function(data) {
+		res.send(data);
+	});
 })
 
 function findByThreshold(arr, thresholdValue) {

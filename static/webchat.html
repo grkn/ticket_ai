@@ -26,9 +26,11 @@
 			}
 			.mine{
 				text-align:right;
+				margin-bottom: 10px;
 			}
 			.bot{
 				text-align:left;
+				margin-bottom: 10px;
 			}
 			.mine .text{
 				border-bottom-left-radius: 1em;
@@ -377,8 +379,8 @@
 			var load = {
 				load : function(){
 					var request = $.ajax({
-						url: "/mongo/findByQuery/messages",
-						method: "POST",
+						url: "/messages",
+						method: "GET",
 						data: {
 							query : {}
 						},
@@ -386,7 +388,7 @@
 					});
 					request.done(function( msg ) {
 						for(var i=0; i < msg.length; i++){
-							if(msg[i].user_id == "BOT"){
+							if(msg[i].owner == "bot"){
 								if(msg[i].message.type && msg[i].message.type=='carousel'){
 									$('#container .main-ul').append('<li class="bot">'+views.carousel(msg[i].message)+'</li>');
 									slider.createSlider($(".slider_"+msg[i].message.intent));
@@ -407,6 +409,7 @@
 								$('#container .main-ul').append('<li class="mine"><div class="text"><span>'+msg[i].message.text+'</span></div><br/></li>');
 							}
 						}
+						$('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
 					});
 					request.fail(function( jqXHR, textStatus ) {
 						alert( "Request failed: " + textStatus );
@@ -458,16 +461,16 @@
 											else{
 													$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg.message.text+'</span></div><br/></li>');
 											}
-											$("#container").animate({ scrollTop: $('#container ul').height()});
+											$('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
+
+										
 								});
 								request.fail(function( jqXHR, textStatus ) {
 								  alert( "Request failed: " + textStatus );
 								});
 						}
 				});
-				$("#container").on("shown.bs.collapse", function(){
-			  	$("#container").animate({ scrollTop: $('#container ul').height()}, 1000);
-			  });
+			  	
 			});
 		</script>
 
