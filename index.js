@@ -11,13 +11,12 @@ app.use(cors())
 
 const restClient = axios.create({
   baseURL: 'https://api.wit.ai',
-  timeout: 5000,
+  timeout: 60000,
   headers: {'Authorization': 'Bearer OKWQTVZCU7M2IDKQR5X2ZKVNWYKEAAJX'}
 });
 
 const url = 'mongodb://localhost:27017';
 const client = new MongoClient(url);
-const dbName = 'ticket_db';
 let mongoDb;
 
 async function connectMongoDb() {
@@ -42,15 +41,15 @@ app.post('/intent', function(req,res) {
 	restClient.post('/intents', {
 		"name" : intentName
 	})
-	.then(function(response) {res.send("Intent created successfully");})
-	.catch(function(error) { res.send("Intent can not be created" + error.data);})
+	.then(function(response) {res.send(response.data);})
+	.catch(function(error) {res.send("Intent can not be created " + error.data);})
 	
 });
 
 app.get('/intents', function(req,res) {
 	restClient.get('/intents')
 	.then(function(response) {res.send(response.data);})
-	.catch(function(error) { res.send("Intent can not be retrieved" + error.data);})
+	.catch(function(error) { res.send("Intent can not be retrieved " + error.data);})
 	
 });
 
@@ -58,7 +57,7 @@ app.delete('/intent', function(req,res) {
 	let intentName = req.query.intentName;
 	restClient.delete('/intents/' + intentName, {})
 	.then(function(response) {res.send(response.data);})
-	.catch(function(error) {res.send("Intent can not be deleted" + error.data);})
+	.catch(function(error) {res.send("Intent can not be deleted " + error.data);})
 	
 });
 
@@ -69,6 +68,34 @@ app.get('/answers', function(req,res) {
 		console.log(data);
 		res.send(data);
 	});
+});
+
+app.post('/utterances', function(req,res) {
+	const text = req.body.text;
+	const intentName = req.body.intentName;
+	const body = [{
+		'text': text,
+		'intent': intentName,
+		'entities': [],
+		'traits': []
+	}];
+	restClient.post('/utterances', body)
+	.then(function(response) {res.send(response.data);})
+	.catch(function(error) {res.send("Text is NOT created. " + error.data);})
+});
+
+app.get('/utterances', function(req,res) {
+	const intentName = req.query.intents;
+	restClient.get('/utterances?limit=100&intents=' + intentName)
+	.then(function(response) {res.send(response.data);})
+	.catch(function(error) {res.send("Text can not be received. " + error.data);})
+});
+
+app.delete('/utterances', function(req,res) {
+	const text = req.query.text;
+	restClient.delete('/utterances', { data : [{ 'text': text}]})
+	.then(function(response) {res.send(response.data);})
+	.catch(function(error) {res.send("Text can not be deleted. " + error.data);})
 });
 
 const server = app.listen(8081, function () {
