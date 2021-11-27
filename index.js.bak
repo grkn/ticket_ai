@@ -94,8 +94,8 @@ app.get('/utterances', function(req,res) {
 app.delete('/utterances', function(req,res) {
 	const text = req.query.text;
 	restClient.delete('/utterances', { data : [{ 'text': text}]})
-	.then(function(response) {console.log(response); res.send(response.data);})
-	.catch(function(error) {console.log(error); res.send("Text can not be deleted. " + error.data);})
+	.then(function(response) {res.send(response.data);})
+	.catch(function(error) {res.send("Text can not be deleted. " + error.data);})
 });
 
 const server = app.listen(8081, function () {
