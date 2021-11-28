@@ -38,6 +38,12 @@ var mongoQueries = class MongoQueries {
       callback(res);
     });
   }
+  deleteByQuery(collectionName, query, callback){
+    this.db.db("ticket_db").collection(collectionName).deleteOne(query, function(err, res) {
+      if (err) throw err;
+      callback(res);
+    })
+  }
   deleteCollection(collectionName){
       this.db.db("ticket_db").collection(collectionName).drop();
   }
@@ -49,7 +55,7 @@ var mongoQueries = class MongoQueries {
     });
   }
   updateOne(collectionName, query, newValues, callback){
-    this.db.db("ticket_db").collection(collectionName).update(query, newValues, function(err, res) {
+    this.db.db("ticket_db").collection(collectionName).replaceOne(query, newValues, function(err, res) {
      if (err) throw err;
       callback(res);
     });
