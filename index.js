@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const axios = require('axios').default;
 const cors = require('cors');
-const {MongoClient} = require('mongodb');
+const {MongoClient, ObjectId} = require('mongodb');
 let MongoQueries = require('./mongoQueries');
 
 app.use(express.json())
@@ -80,6 +80,14 @@ app.get('/answers', function (req, res) {
         res.send(data);
     });
 });
+app.get('/answers/:type', function (req, res) {
+    const type = req.params.type;
+    console.log(type);
+    mongoDb.findByQuery('answers', {type: type}, function (data) {
+        console.log("get answer result" + JSON.stringify(data))
+        res.send(data);
+    });
+});
 app.post('/answers', function (req, res) {
     console.log(req.body)
     mongoDb.insertOne("answers", req.body, function (data) {
@@ -90,6 +98,14 @@ app.post('/answers', function (req, res) {
 app.delete('/answers', function (req, res) {
     const intentId = req.query.intentId;
     mongoDb.deleteByQuery('answers', {intentId: Number(intentId)}, function (data) {
+        console.log("get delete result" + JSON.stringify(data))
+        res.send(data);
+    });
+});
+app.delete('/answers/:id', function (req, res) {
+    const id = req.params.id;
+    console.log(id);
+    mongoDb.deleteByQuery('answers', {_id: ObjectId(id)}, function (data) {
         console.log("get delete result" + JSON.stringify(data))
         res.send(data);
     });
