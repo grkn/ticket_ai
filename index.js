@@ -111,8 +111,8 @@ app.delete('/answers/:id', function (req, res) {
     });
 });
 app.put('/answers', function (req, res) {
-    const intentId = req.body.intentId;
-    mongoDb.updateOne('answers', {intentId: Number(intentId)},req.body, function (data) {
+    const id = req.body.id;
+    mongoDb.updateOne('answers', {_id: ObjectId(id)},req.body, function (data) {
         console.log("get put result" + JSON.stringify(data))
         res.send(data);
     });
@@ -186,7 +186,7 @@ app.get('/message', function (req, res) {
             } else {
                 let intent = findMostConfidentValue(arr);
                 console.log("Message Intent Found: " + intent.name + " " + intent.id);
-                mongoDb.findByQuery('answers', {intentId: Number(intent.id)}, function (data) {
+                mongoDb.findByQuery('answers', {intentId: "" + intent.id}, function (data) {
                     console.log(data);
                     if (data.length > 0) {
                         const length = data.length;
