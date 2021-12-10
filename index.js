@@ -110,8 +110,8 @@ app.delete('/answers/:id', function (req, res) {
         res.send(data);
     });
 });
-app.put('/answers', function (req, res) {
-    const id = req.body.id;
+app.put('/answers/:id', function (req, res) {
+    const id = req.params.id;
     mongoDb.updateOne('answers', {_id: ObjectId(id)},req.body, function (data) {
         console.log("get put result" + JSON.stringify(data))
         res.send(data);
