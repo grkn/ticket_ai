@@ -294,15 +294,15 @@
 						+'<a href="javascript:void(0)" class="control_prev"><</a>'
 						+'<ul>'
 							var li = "";
-						for(var i = 0; i < obj.text.length; i++){
+						for(var i = 0; i < obj.message.length; i++){
 						 li +='<li>'
-								+'<img width="250px" height="150px" src="'+obj.text[i].imgUrl+'"/>'
+								+'<img width="250px" height="150px" src="'+obj.message[i].imgUrl+'"/>'
 								+'<div class="text-title-subtitle">'
-									+'<div><b>'+obj.text[i].title+'</b></div>'
-								+'	<div>'+obj.text[i].subtitle+'</div>';
+									+'<div><b>'+obj.message[i].title+'</b></div>'
+								+'	<div>'+obj.message[i].subtitle+'</div>';
 								var buttons="";
-								for(var j = 0; j < obj.text[i].buttons.length; j++){
-										buttons +='	<a style="width:250px" href="'+obj.text[i].buttons[j].url+'" type="button" class="btn btn-info">'+obj.text[i].buttons[j].name+'</a>'
+								for(var j = 0; j < obj.message[i].buttons.length; j++){
+										buttons +='	<a style="width:250px" href="'+obj.message[i].buttons[j].url+'" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a>'
 								}
 								li += buttons;
 								li+='</div></li>';
@@ -313,13 +313,13 @@
 				quickReply : function(obj){
 					var qReply = '<div class="quickReply">'
 						+'<div class="quickContent">'
-							+	'<span>'+obj.text[0].text+'</span>'
+							+	'<span>'+obj.message.text+'</span>'
 						+'</div>';
-						for(var j = 0; j < obj.text[0].buttons.length; j++){
+						for(var j = 0; j < obj.message.buttons.length; j++){
 								if(j % 2 == 0){
 										qReply += '<div style="text-align:center">';
 								}
-								qReply +='<button style="width:40%" type="button" class="btn btn-info" onclick="quickReplyFunc(\''+obj.text[0].buttons[j].text+'\', event)">'+obj.text[0].buttons[j].name+'</button>';
+								qReply +='<button style="width:40%" type="button" class="btn btn-info" onclick="quickReplyFunc(\''+obj.message.buttons[j].url+'\', event)">'+obj.message.buttons[j].name+'</button>';
 								if(j % 2 == 1){
 									qReply += '</div>'
 								}
@@ -330,24 +330,21 @@
 				listTemplate : function(obj){
 					var listTemplate = '<div class="list-view">'
 						console.log(obj);
-						for(var i = 0; i < obj.text.list.length; i++){
+						for(var i = 0; i < obj.message.length; i++){
 								listTemplate += '<div class="list-item">'
-								+'<div><span class="title"><b>'+obj.text.list[i].title+'</b></span><img width="40px" height="40px" src="'+obj.text.list[i].imgUrl+'"/></div>'
-								+'<div><span>'+obj.text.list[i].subTitle+'</span></div>';
+								+'<div><span class="title"><b>'+obj.message[i].title+'</b></span><img width="40px" height="40px" src="'+obj.message[i].imgUrl+'"/></div>'
+								+'<div><span>'+obj.message[i].subtitle+'</span></div>';
 								var buttons = "";
-								for(var j = 0; j < obj.text.list[i].buttons.length; j++){
-									if(obj.text.list[i].buttons[j].text){
-										buttons +='<div><a target="_blank" href="'+obj.text.list[i].buttons[j].url+'" onclick="buttonWrite(\''+obj.text.list[i].buttons[j].text+'\')" style="width:150px" type="button" class="btn btn-info">'+obj.text.list[i].buttons[j].name+'</a></div>'
+								for(var j = 0; j < obj.message[i].buttons.length; j++){
+									if(obj.message[i].buttons[j].text){
+										buttons +='<div><a target="_blank" href="'+obj.message[i].buttons[j].url+'" onclick="buttonWrite(\''+obj.message[i].buttons[j].text+'\')" style="width:150px" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a></div>'
 									}else{
-										buttons +='<div><a target="_blank" href="'+obj.text.list[i].buttons[j].url+'"  style="width:150px" type="button" class="btn btn-info">'+obj.text.list[i].buttons[j].name+'</a></div>'
+										buttons +='<div><a target="_blank" href="'+obj.message[i].buttons[j].url+'"  style="width:150px" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a></div>'
 									}
 								}
 								listTemplate += buttons;
 								listTemplate +='</div>'
 						}
-						listTemplate +='<div class="list-item list-item-last">'
-							+'<div><a target="_blank" href="'+obj.text.viewMoreButtonUrl+'" style="width:250px" type="button" class="btn btn-info">'+obj.text.viewMoreButtonName+'</a></div>'
-						+'</div>'
 					+'</div>';
 					return listTemplate;
 				},
@@ -356,15 +353,15 @@
 						  +'<ul >'
 							+	'<li>'
 									+'<div class="text-title-subtitle">'
-										+'<div class="text"><span>'+obj.text[0].text+'</span></div>';
+										+'<div class="text"><span>'+obj.message.text+'</span></div>';
 										var buttons = "";
-										for(var i = 0; i < obj.text[0].buttons.length; i++){
-											if(obj.text[0].buttons[i].text && obj.text[0].buttons[i].url){
-												buttons += '<a target="_blank" href="'+obj.text[0].buttons[i].url+'" onclick="buttonWrite(\''+obj.text[0].buttons[i].text+'\')" style="width:200px" type="button" class="btn btn-info">'+obj.text[0].buttons[i].name+'</a>';
-											}else if(!obj.text[0].buttons[i].text && obj.text[0].buttons[i].url){
-												buttons += '<a target="_blank" href="'+obj.text[0].buttons[i].url+'" style="width:200px" type="button" class="btn btn-info">'+obj.text[0].buttons[i].name+'</a>';
-											}else if(obj.text[0].buttons[i].text && !obj.text[0].buttons[i].url){
-												buttons += '<a onclick="buttonWrite(\''+obj.text[0].buttons[i].text+'\')" style="width:200px" type="button" class="btn btn-info">'+obj.text[0].buttons[i].name+'</a>';
+										for(var i = 0; i < obj.message.buttons.length; i++){
+											if(obj.message.buttons[i].text && obj.message.buttons[i].url){
+												buttons += '<a target="_blank" href="'+obj.message.buttons[i].url+'" onclick="buttonWrite(\''+obj.message.buttons[i].text+'\')" style="width:200px" type="button" class="btn btn-info">'+obj.message.buttons[i].name+'</a>';
+											}else if(!obj.message.buttons[i].text && obj.message.buttons[i].url){
+												buttons += '<a target="_blank" href="'+obj.message.buttons[i].url+'" style="width:200px" type="button" class="btn btn-info">'+obj.message.buttons[i].name+'</a>';
+											}else if(obj.message.buttons[i].text && !obj.message.buttons[i].url){
+												buttons += '<a onclick="buttonWrite(\''+obj.message.buttons[i].text+'\')" style="width:200px" type="button" class="btn btn-info">'+obj.message.buttons[i].name+'</a>';
 											}
 										}
 							genericButtons += buttons;
@@ -403,10 +400,10 @@
 									$('#container .main-ul').append('<li class="bot">'+views.genericButtons(msg[i].message)+'</li>');
 								}
 								else{
-									$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg[i].message.text+'</span></div><br/></li>');
+									$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg[i].message.message+'</span></div><br/></li>');
 								}
 							}else{
-								$('#container .main-ul').append('<li class="mine"><div class="text"><span>'+msg[i].message.text+'</span></div><br/></li>');
+								$('#container .main-ul').append('<li class="mine"><div class="text"><span>'+msg[i].message+'</span></div><br/></li>');
 							}
 						}
 						$('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
@@ -459,7 +456,8 @@
 												$('#container .main-ul').append('<li class="bot">'+views.genericButtons(msg)+'</li>');
 											}
 											else{
-													$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg.message.text+'</span></div><br/></li>');
+												
+													$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg.message+'</span></div><br/></li>');
 											}
 											$('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
 

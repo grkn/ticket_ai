@@ -186,21 +186,21 @@ app.get('/message', function (req, res) {
             } else {
                 let intent = findMostConfidentValue(arr);
                 console.log("Message Intent Found: " + intent.name + " " + intent.id);
-                mongoDb.findByQuery('answers', {intentId: "" + intent.id}, function (data) {
+                mongoDb.findByQuery('answers', {intentId: '' + intent.id}, function (data) {
                     console.log(data);
                     if (data.length > 0) {
                         const length = data.length;
                         const answerIndex = randomIntFromInterval(0, length - 1)
-                        const responseMessage = {'message': {text: data[answerIndex].text}};
+                        const responseMessage = data[answerIndex];
                         mongoDb.insertOne('messages', {
                             created: new Date().getTime(),
-                            message: {text: message, confidence: 1.0},
+                            message: message,
                             owner: 'user'
                         }, function (data) {
                         });
                         mongoDb.insertOne('messages', {
                             created: new Date().getTime(),
-                            message: {text: data[answerIndex].text, confidence: intent.confidence},
+                            message: responseMessage,
                             owner: 'bot'
                         }, function (data) {
                         });
