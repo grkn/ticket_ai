@@ -117,6 +117,19 @@ app.put('/answers/:id', function (req, res) {
         res.send(data);
     });
 });
+app.get('/config', function (req, res) {
+    mongoDb.findByQuery('config', {}, function (data) {
+        console.log("get config result" + JSON.stringify(data))
+        res.send(data);
+    });
+});
+app.put('/config', function (req, res) {
+    console.log(req.body);
+    mongoDb.updateOne('config', {_id: ObjectId("61ba248dbea5e294af762229")},req.body, function (data) {
+        console.log("get put result" + JSON.stringify(data))
+        res.send(data);
+    });
+});
 app.post('/utterances', function (req, res) {
     const text = req.body.text;
     const intentName = req.body.intentName;
