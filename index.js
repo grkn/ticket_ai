@@ -125,7 +125,7 @@ app.get('/config', function (req, res) {
 });
 app.put('/config', function (req, res) {
     console.log(req.body);
-    mongoDb.updateOne('config', {_id: ObjectId("61ba248dbea5e294af762229")},req.body, function (data) {
+    mongoDb.updateOne('config', {},req.body, function (data) {
         console.log("get put result" + JSON.stringify(data))
         res.send(data);
     });
