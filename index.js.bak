@@ -3,6 +3,7 @@ const app = express();
 const axios = require('axios').default;
 const cors = require('cors');
 const {MongoClient, ObjectId} = require('mongodb');
+const { v4: uuidv4 } = require('uuid');
 let MongoQueries = require('./mongoQueries');
 
 app.use(express.json())
@@ -117,6 +118,19 @@ app.put('/answers/:id', function (req, res) {
         res.send(data);
     });
 });
+app.get('/config', function (req, res) {
+    mongoDb.findByQuery('config', {}, function (data) {
+        console.log("get config result" + JSON.stringify(data))
+        res.send(data);
+    });
+});
+app.put('/config', function (req, res) {
+    console.log(req.body);
+    mongoDb.updateOne('config', {},req.body, function (data) {
+        console.log("get put result" + JSON.stringify(data))
+        res.send(data);
+    });
+});
 app.post('/utterances', function (req, res) {
     const text = req.body.text;
     const intentName = req.body.intentName;
@@ -173,48 +187,89 @@ app.get('/message', function (req, res) {
         .then(function (response) {
             const intents = response.data.intents;
             console.log("Message Intent Array Found: ");
-            console.log(intents);
-            // threshold value : 0.7
-            const arr = findByThreshold(intents, 0.7);
-            if (intents.length === 0 || arr.length === 0) {
-                res.send({
-                    'message': {
-                        //fallback message
-                        'text': 'Ooops I can not find anything!'
-                    }
-                });
-            } else {
-                let intent = findMostConfidentValue(arr);
-                console.log("Message Intent Found: " + intent.name + " " + intent.id);
-                mongoDb.findByQuery('answers', {intentId: '' + intent.id}, function (data) {
-                    console.log(data);
-                    if (data.length > 0) {
-                        const length = data.length;
-                        const answerIndex = randomIntFromInterval(0, length - 1)
-                        const responseMessage = data[answerIndex];
-                        mongoDb.insertOne('messages', {
-                            created: new Date().getTime(),
-                            message: responseMessage,
-                            owner: 'user'
-                        }, function (data) {
-                        });
-                        mongoDb.insertOne('messages', {
-                            created: new Date().getTime(),
-                            message: responseMessage,
-                            owner: 'bot'
-                        }, function (data) {
-                        });
-                        res.send(responseMessage);
-                    } else {
-                        res.send({
-                            'message': {
-                                //fallback message
-                                'text': 'Ooops I can not find anything!'
-                            }
-                        });
-                    }
-                });
-            }
+            console.log(intents);			
+			
+			mongoDb.findByQuery('config', {}, function (config) {
+				const threshold = config[0].threshold;
+				const arr = findByThreshold(intents, threshold);
+				if (intents.length === 0 || arr.length === 0) {
+					console.log(config);
+					mongoDb.insertOne('messages', {
+							created: new Date().getTime(),
+							message: message,
+							owner: 'user'
+					}, function (data) {
+					});
+					mongoDb.insertOne('messages', {
+							created: new Date().getTime(),
+							message: {message: config[0].fallback},
+							owner: 'bot'
+						}, function (data) {
+					});					
+					res.send({
+								'message': config[0].fallback
+							});
+					
+				} else {
+					let intent = findMostConfidentValue(arr);
+					console.log("Message Intent Found: " + intent.name + " " + intent.id);
+					
+					if(intent.name.indexOf("TICKET") == 0 || intent.name.indexOf("Ticket") == 0) {
+					
+						let description = intent.name.replace("TICKET_", "");
+						description = description.replace("Ticket_", "");
+						const ticket = {
+							id : uuidv4(),
+							description: description,
+							created : new Date().getTime(),
+							status: 'active',
+							intent: intent.name
+						}
+						mongoDb.insertOne('ticket', ticket, function(data) {
+						});
+					}
+					
+					mongoDb.findByQuery('answers', {intentId: '' + intent.id}, function (data) {
+						console.log(data);
+						if (data.length > 0) {
+							const length = data.length;
+							const answerIndex = randomIntFromInterval(0, length - 1)
+							const responseMessage = data[answerIndex];
+							
+							mongoDb.insertOne('messages', {
+								created: new Date().getTime(),
+								message: message,
+								owner: 'user'
+							}, function (data) {
+							});
+							mongoDb.insertOne('messages', {
+								created: new Date().getTime(),
+								message: responseMessage,
+								owner: 'bot'
+							}, function (data) {
+							});
+							res.send(responseMessage);
+						} else {
+							console.log(data);
+							mongoDb.insertOne('messages', {
+									created: new Date().getTime(),
+									message: message,
+									owner: 'user'
+							}, function (data) {
+							});
+							mongoDb.insertOne('messages', {
+									created: new Date().getTime(),
+									message: {message: config[0].fallback},
+									owner: 'bot'
+								}, function (data) {
+							});					
+							res.send({
+								'message': config[0].fallback
+							});
+						}
+					});
+				}
+			});
 
         })
         .catch(function (error) {
@@ -223,10 +278,49 @@ app.get('/message', function (req, res) {
 })
 
 app.get('/messages', function(req,res) {
-	mongoDb.findByQuery('messages',  {}, function(data) {
+	mongoDb.findByQuery('messages', {}, function(data) {
 		res.send(data);
 	});
 })
+
+app.post('/ticket', function(req,res){
+	mongoDb.insertOne('ticket', req.body, function(data) {
+		res.send(data);
+	});
+});
+
+app.get('/ticket', function(req,res) {
+	const id = req.params.id;
+	mongoDb.findByQuery('ticket', { id : id}, function(data){
+		res.send(data);
+	});
+});
+
+app.get('/ticket/all',function(req,res) {
+	mongoDb.findByQuery('ticket', {}, function(data){
+		res.send(data);
+	});
+});
+
+app.put('/ticket', function(req,res){
+	const id = req.body.id;
+	const status = req.body.status;
+	
+	mongoDb.findByQuery('ticket', {id: id}, function(ticket) {
+		if(ticket && ticket[0]) {
+			ticket[0].status = status;
+			console.log(ticket);
+			mongoDb.updateOne('ticket', {id : id}, ticket[0], function(data) {
+				res.send(data);
+			});
+		}
+	});
+});
+
+app.delete('/remove/messages', function(req,res) {
+	mongoDb.deleteCollection('messages');
+	res.send({res: "OK"});
+});
 
 function findByThreshold(arr, thresholdValue) {
     arr = arr.filter(item => item.confidence >= thresholdValue);

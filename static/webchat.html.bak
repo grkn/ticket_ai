@@ -302,7 +302,7 @@
 								+'	<div>'+obj.message[i].subtitle+'</div>';
 								var buttons="";
 								for(var j = 0; j < obj.message[i].buttons.length; j++){
-										buttons +='	<a style="width:250px" href="'+obj.message[i].buttons[j].url+'" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a>'
+										buttons +='	<a style="width:250px" onclick="buttonWrite(\''+obj.message[i].buttons[j].text+'\')" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a>'
 								}
 								li += buttons;
 								li+='</div></li>';
@@ -319,7 +319,7 @@
 								if(j % 2 == 0){
 										qReply += '<div style="text-align:center">';
 								}
-								qReply +='<button style="width:40%" type="button" class="btn btn-info" onclick="quickReplyFunc(\''+obj.message.buttons[j].url+'\', event)">'+obj.message.buttons[j].name+'</button>';
+								qReply +='<button style="width:40%" type="button" class="btn btn-info" onclick="quickReplyFunc(\''+obj.message.buttons[j].text+'\', event)">'+obj.message.buttons[j].name+'</button>';
 								if(j % 2 == 1){
 									qReply += '</div>'
 								}
@@ -337,9 +337,9 @@
 								var buttons = "";
 								for(var j = 0; j < obj.message[i].buttons.length; j++){
 									if(obj.message[i].buttons[j].text){
-										buttons +='<div><a target="_blank" href="'+obj.message[i].buttons[j].url+'" onclick="buttonWrite(\''+obj.message[i].buttons[j].text+'\')" style="width:150px" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a></div>'
+										buttons +='<div><a target="_blank" onclick="buttonWrite(\''+obj.message[i].buttons[j].text+'\')" style="width:150px" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a></div>'
 									}else{
-										buttons +='<div><a target="_blank" href="'+obj.message[i].buttons[j].url+'"  style="width:150px" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a></div>'
+										buttons +='<div><a target="_blank" style="width:150px" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a></div>'
 									}
 								}
 								listTemplate += buttons;
@@ -357,9 +357,9 @@
 										var buttons = "";
 										for(var i = 0; i < obj.message.buttons.length; i++){
 											if(obj.message.buttons[i].text && obj.message.buttons[i].url){
-												buttons += '<a target="_blank" href="'+obj.message.buttons[i].url+'" onclick="buttonWrite(\''+obj.message.buttons[i].text+'\')" style="width:200px" type="button" class="btn btn-info">'+obj.message.buttons[i].name+'</a>';
+												buttons += '<a onclick="buttonWrite(\''+obj.message.buttons[i].text+'\')" style="width:200px" type="button" class="btn btn-info">'+obj.message.buttons[i].name+'</a>';
 											}else if(!obj.message.buttons[i].text && obj.message.buttons[i].url){
-												buttons += '<a target="_blank" href="'+obj.message.buttons[i].url+'" style="width:200px" type="button" class="btn btn-info">'+obj.message.buttons[i].name+'</a>';
+												buttons += '<a style="width:200px" type="button" class="btn btn-info">'+obj.message.buttons[i].name+'</a>';
 											}else if(obj.message.buttons[i].text && !obj.message.buttons[i].url){
 												buttons += '<a onclick="buttonWrite(\''+obj.message.buttons[i].text+'\')" style="width:200px" type="button" class="btn btn-info">'+obj.message.buttons[i].name+'</a>';
 											}
@@ -386,21 +386,21 @@
 					request.done(function( msg ) {
 						for(var i=0; i < msg.length; i++){
 							if(msg[i].owner == "bot"){
-								if(msg[i].message.type && msg[i].message.type=='carousel'){
+								if(msg[i].message && msg[i].message.type && msg[i].message.type=='carousel'){
 									$('#container .main-ul').append('<li class="bot">'+views.carousel(msg[i].message)+'</li>');
 									slider.createSlider($(".slider_"+msg[i].message.intent));
 								}
-								else if (msg[i].message.type && msg[i].message.type=='quickReply'){
+								else if (msg[i].message && msg[i].message.type && msg[i].message.type=='quickReply'){
 									$('#container .main-ul').append('<li class="bot">'+views.quickReply(msg[i].message)+'</li>');
 								}
-								else if(msg[i].message.type && msg[i].message.type=="listTemplate"){
+								else if(msg[i].message &&  msg[i].message.type && msg[i].message.type=="listTemplate"){
 									$('#container .main-ul').append('<li class="bot">'+views.listTemplate(msg[i].message)+'</li>');
 								}
-								else if(msg[i].message.type && (msg[i].message.type=="genericButtons" || msg[i].message.type=="attachment")){
+								else if(msg[i].message &&  msg[i].message.type && (msg[i].message.type=="genericButtons" || msg[i].message.type=="attachment")){
 									$('#container .main-ul').append('<li class="bot">'+views.genericButtons(msg[i].message)+'</li>');
 								}
 								else{
-									$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg[i].message.message+'</span></div><br/></li>');
+									$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg[i].message+'</span></div><br/></li>');
 								}
 							}else{
 								$('#container .main-ul').append('<li class="mine"><div class="text"><span>'+msg[i].message+'</span></div><br/></li>');
@@ -456,7 +456,8 @@
 												$('#container .main-ul').append('<li class="bot">'+views.genericButtons(msg)+'</li>');
 											}
 											else{
-													$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg.message.message+'</span></div><br/></li>');
+												
+													$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg.message+'</span></div><br/></li>');
 											}
 											$('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
 
@@ -479,147 +480,7 @@
 			<!--<button style="width:300px" type="button" class="btn btn-info" data-toggle="collapse" data-target="#container">Simple collapsible</button>-->
 			<div id="container" >
 				<ul class="main-ul">
-					<li class="bot"><div class="text"><span>AAAAAA aaaaa aaaaaaaaaaa aaaa aaaaaaa</span></div><br/></li>
-					<li class="mine"><div class="text"><span>BBBBB</span></div><br/></li>
-					<li class="mine"><div class="text"><span>CCCCCC</span></div><br/></li>
-					<li class="bot"><div class="text"><span>DDDDDD</span></div><br/></li>
-					<li class="bot"><div class="text"><span>DDDDDD</span></div><br/></li>
-					<li class="bot"><div class="text"><span>DDDDDD</span></div><br/></li>
-					<li class="bot">
-						<div class="generic_button">
-						  <ul >
-								<li>
-									<div class="text-title-subtitle">
-										<div class="text"><span>Please select between below options AAAAAA AAAAAAAAA AAAAAAAAAAAA AAAAAAAAA</span></div>
-										<button style="width:200px" type="button" class="btn btn-info">Button</button>
-										<button style="width:200px" type="button" class="btn btn-info">Button</button>
-										<button style="width:200px" type="button" class="btn btn-info">Button</button>
-									</div>
-								</li>
-						  </ul>
-						</div>
-					</li>
-					<li class="bot">
-						<div class="slider_1 slider">
-						  <a href="javascript:void(0)" class="control_next">></a>
-						  <a href="javascript:void(0)" class="control_prev"><</a>
-							<ul>
-								<li>
-									<img width="250px" height="150px" src="https://i0.wp.com/lovecuteanimals.objects.cdn.dream.io/wp-content/uploads/2016/01/Cute-Netherland-Dwarf-Rabbit.jpg?w=1160"/>
-									<div class="text-title-subtitle">
-										<div><b>Title</b></div>
-										<div>Subtitle</div>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-									</div>
-								</li>
-								<li>
-									<img width="250px" height="150px" src="https://i0.wp.com/lovecuteanimals.objects.cdn.dream.io/wp-content/uploads/2016/01/Cute-Netherland-Dwarf-Rabbit.jpg?w=1160"/>
-									<div class="text-title-subtitle">
-										<div><b>Title</b></div>
-										<div>Subtitle</div>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-									</div>
-								</li>
-								<li>
-									<img width="250px" height="150px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/>
-									<div class="text-title-subtitle">
-										<div><b>Title</b></div>
-										<div>Subtitle</div>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-									</div>
-								</li>
-						  </ul>
-						</div>
-						<script>
-							$(document).ready(function(){
-								slider.createSlider($('.slider_1'));
-							});
-						</script>
-					</li>
-					<li class="bot">
-						<div class="slider_2 slider">
-						  <a href="javascript:void(0)" class="control_next">></a>
-						  <a href="javascript:void(0)" class="control_prev"><</a>
-							<ul>
-								<li>
-									<img width="250px" height="150px" src="https://i0.wp.com/lovecuteanimals.objects.cdn.dream.io/wp-content/uploads/2016/01/Cute-Netherland-Dwarf-Rabbit.jpg?w=1160"/>
-									<div class="text-title-subtitle">
-										<div><b>Title</b></div>
-										<div>Subtitle</div>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-									</div>
-								</li>
-								<li>
-									<img width="250px" height="150px" src="https://i0.wp.com/lovecuteanimals.objects.cdn.dream.io/wp-content/uploads/2016/01/Cute-Netherland-Dwarf-Rabbit.jpg?w=1160"/>
-									<div class="text-title-subtitle">
-										<div><b>Title</b></div>
-										<div>Subtitle</div>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-									</div>
-								</li>
-								<li>
-									<img width="250px" height="150px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/>
-									<div class="text-title-subtitle">
-										<div><b>Title</b></div>
-										<div>Subtitle</div>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-										<button style="width:250px" type="button" class="btn btn-info">Button</button>
-									</div>
-								</li>
-						  </ul>
-						</div>
-						<script>
-							$(document).ready(function(){
-								slider.createSlider($('.slider_2'));
-							});
-						</script>
-					</li>
-					<li class="bot">
-						<div class="list-view">
-							<div class="list-item">
-								<div><span class="title"><b>Title Title TitleTitleTitle Title TitleTitle TitleTitleTitle</b></span><img width="40px" height="40px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/></div>
-								<div><span>SubTitle SubTitle SubTitleSubTitleSubTitleSubTitle SubTitle</span></div>
-								<div><button style="width:150px" type="button" class="btn btn-info">Button</button></div>
-							</div>
-							<div class="list-item">
-								<div><span class="title"><b>Title</b></span><img  width="40px" height="40px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/></div>
-								<div><span>SubTitle</span></div>
-								<div><button style="width:150px" type="button" class="btn btn-info">Button</button></div>
-							</div>
-							<div class="list-item">
-								<div><span class="title"><b>Title</b></span><img  width="40px" height="40px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/></div>
-								<div><span>SubTitle</span></div>
-								<div><button style="width:150px" type="button" class="btn btn-info">Button</button></div>
-							</div >
-							<div class="list-item">
-								<div><span class="title"><b>Title</b></span><img  width="40px" height="40px" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"/></div>
-								<div><span>SubTitle</span></div>
-								<div><button style="width:150px" type="button" class="btn btn-info">Button</button></div>
-							</div>
-							<div class="list-item">
-								<div><button style="width:250px" type="button" class="btn btn-info">View More</button></div>
-							</div>
-						</div>
-					</li>
-					<li class="bot">
-						<div class="quickReply">
-							<div class="quickContent">
-									<span>Hello, did you like my intent, please answer....</span>
-							</div>
-							<div style="text-align:center">
-								<button style="width:40%" type="button" class="btn btn-info">Button</button>
-								<button style="width:40%" type="button" class="btn btn-info">Button</button>
-							</div>
-							<div style="text-align:center">
-								<button style="width:40%" type="button" class="btn btn-info">Button</button>
-							</div>
-						</div>
-					</li>
+					
 				</ul>
 				<div class="input" style="width:100%;border:1px solid #c3c3c3;height:50px;">
 					<span class="persistenceMenu glyphicon glyphicon-menu-hamburger" >
