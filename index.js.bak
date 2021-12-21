@@ -214,10 +214,10 @@ app.get('/message', function (req, res) {
 					let intent = findMostConfidentValue(arr);
 					console.log("Message Intent Found: " + intent.name + " " + intent.id);
 					
-					if(intent.name.indexOf("TICKET") == 0 || intent.name.indexOf("Ticket") == 0) {
+					if(intent.name.indexOf("TICKET") == 0 || intent.name.indexOf("ticket") == 0) {
 					
 						let description = intent.name.replace("TICKET_", "");
-						description = description.replace("Ticket_", "");
+						description = description.replace("ticket_", "");
 						const ticket = {
 							id : uuidv4(),
 							description: description,

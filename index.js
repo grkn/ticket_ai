@@ -74,6 +74,12 @@ app.delete('/intent', function (req, res) {
 
 });
 
+app.get('/answers/all', function(req,res) {
+	mongoDb.findByQuery('answers', {}, function (data) {
+        res.send(data);
+    });
+});
+
 app.get('/answers', function (req, res) {
     const intentId = req.query.intentId;
     mongoDb.findByQuery('answers', {intentId: Number(intentId)}, function (data) {
