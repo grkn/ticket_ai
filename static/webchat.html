@@ -339,7 +339,7 @@
 									if(obj.message[i].buttons[j].text){
 										buttons +='<div><a target="_blank" onclick="buttonWrite(\''+obj.message[i].buttons[j].text+'\')" style="width:150px" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a></div>'
 									}else{
-										buttons +='<div><a target="_blank" style="width:150px" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a></div>'
+										buttons +='<div><a target="_blank" href="'+obj.message[i].buttons[j].url+'" style="width:150px" type="button" class="btn btn-info">'+obj.message[i].buttons[j].name+'</a></div>'
 									}
 								}
 								listTemplate += buttons;

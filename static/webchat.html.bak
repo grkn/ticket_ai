@@ -400,7 +400,7 @@
 									$('#container .main-ul').append('<li class="bot">'+views.genericButtons(msg[i].message)+'</li>');
 								}
 								else{
-									$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg[i].message+'</span></div><br/></li>');
+									$('#container .main-ul').append('<li class="bot"><div class="text"><span>'+msg[i].message.message+'</span></div><br/></li>');
 								}
 							}else{
 								$('#container .main-ul').append('<li class="mine"><div class="text"><span>'+msg[i].message+'</span></div><br/></li>');
